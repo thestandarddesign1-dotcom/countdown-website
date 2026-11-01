@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Weihnachtscountdown: Wie lange noch bis Weihnachten?</title>
+<meta name="description" content="Weihnachtscountdown: Live-Countdown in Tagen, Stunden, Minuten und Sekunden bis Weihnachten. Kostenlos, mit Link zum Teilen.">
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);--panel:#fff;--ink:#1b1b24;--line:rgba(128,128,128,.35);--fg:#fff;--glass:rgba(0,0,0,.32);color-scheme:light}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--panel:#1c1c27;--ink:#f3f3f8;color-scheme:dark}}
+:root[data-theme="dark"]{--panel:#1c1c27;--ink:#f3f3f8;color-scheme:dark}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:inherit}
+body{margin:0;min-height:100vh;font-family:Poppins,system-ui,sans-serif;color:var(--fg);background:#1b1b2a;overflow-x:hidden}
+#scene{position:fixed;inset:0;z-index:0;transition:opacity .5s}
+#scene svg{position:absolute;inset:0;width:100%;height:100%}
+.tw{animation:tw 3s ease-in-out infinite}
+@keyframes tw{50%{opacity:.25}}
+.pulse{transform-box:fill-box;transform-origin:center;animation:pu 4s ease-in-out infinite}
+@keyframes pu{50%{transform:scale(1.12);opacity:.7}}
+section{position:relative;z-index:1;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:28px 16px;text-align:center}
+[hidden]{display:none!important}
+h1{font-family:"Playfair Display",Georgia,serif;font-style:italic;font-weight:800;font-size:clamp(3.2rem,14vw,9rem);line-height:1.05;margin:0 0 10px;text-shadow:0 3px 18px rgba(0,0,0,.3);overflow-wrap:anywhere}
+.sub{font-weight:300;font-size:clamp(.95rem,2.6vw,1.25rem);margin:0 0 28px}
+.count{display:flex;gap:clamp(8px,2vw,22px);justify-content:center;flex-wrap:wrap;margin-bottom:34px}
+.box{background:var(--glass);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-radius:22px;padding:20px 4px;min-width:clamp(72px,21vw,180px);border:1px solid rgba(255,255,255,.18)}
+.box b{display:block;font-weight:600;font-size:clamp(2.2rem,11vw,6.5rem);line-height:1;font-variant-numeric:tabular-nums}
+.box small{font-weight:300;font-size:clamp(.58rem,2.2vw,1.1rem);text-transform:uppercase;letter-spacing:.05em}
+.done{font-family:"Playfair Display",Georgia,serif;font-style:italic;font-size:clamp(2.4rem,9vw,5rem)}
+.ghost{background:var(--glass);color:var(--fg);border:1px solid rgba(255,255,255,.3);border-radius:999px;padding:10px 22px;font:inherit;cursor:pointer;backdrop-filter:blur(8px)}
+form{background:var(--panel);color:var(--ink);border-radius:24px;padding:26px;display:grid;gap:16px;width:min(560px,100%);text-align:left;box-shadow:0 20px 60px rgba(0,0,0,.35)}
+form h2{margin:0;font-family:"Playfair Display",Georgia,serif;font-style:italic;font-size:1.8rem}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:480px){.row{grid-template-columns:1fr}}
+label{display:grid;gap:5px;font-size:.82rem;font-weight:600}
+label em{font-weight:300;font-style:normal;opacity:.7}
+input[type=text],input[type=date],input[type=time]{font:inherit;padding:11px 12px;border-radius:12px;border:1px solid var(--line);background:transparent;color:inherit;width:100%}
+.themes{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:10px}
+.themes label{cursor:pointer;position:relative}
+.themes input{position:absolute;opacity:0}
+.themes span{display:flex;align-items:flex-end;height:64px;border-radius:12px;padding:8px;color:#fff;font-size:.78rem;border:3px solid transparent;text-shadow:0 1px 4px rgba(0,0,0,.6)}
+.themes input:checked+span{border-color:var(--ink)}
+.themes input:focus-visible+span{outline:2px solid var(--ink);outline-offset:2px}
+#cf{position:fixed;inset:0;width:100%;height:100%;z-index:5;pointer-events:none}
+.acts{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+footer{position:relative;z-index:1;background:var(--glass);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);padding:32px 16px;text-align:center;font-size:.9rem}
+footer p{max-width:720px;margin:0 auto 16px;line-height:1.7}
+footer a{color:inherit;margin:0 8px;display:inline-block;padding:4px 0}
+#cb{position:fixed;left:12px;right:12px;bottom:calc(12px + env(safe-area-inset-bottom,0px));z-index:10;background:var(--panel);color:var(--ink);border-radius:16px;padding:18px;box-shadow:0 10px 40px rgba(0,0,0,.45);max-width:560px;margin:auto;display:grid;gap:12px;font-size:.88rem;line-height:1.5}
+#cb p{margin:0}#cb .row{grid-template-columns:1fr 1fr}
+.go.alt{background:transparent;color:var(--ink);border:1px solid var(--line)}
+.go{font:inherit;font-weight:600;padding:14px;border:0;border-radius:14px;background:#111;color:#fff;cursor:pointer}
+.go:hover{opacity:.85}
+</style>
+</head>
+<body>
+<div id="scene"></div>
+<canvas id="cf"></canvas>
+
+<section id="setup">
+  <form id="form">
+    <h2>Neuer Countdown</h2>
+    <label>Anlass oder Name<input id="name" type="text" placeholder="z. B. Weihnachten, Annas Geburtstag" required maxlength="60"></label>
+    <div class="row">
+      <label>Datum<input id="date" type="date" required></label>
+      <label>Uhrzeit <em>(optional)</em><input id="time" type="time"></label>
+    </div>
+    <label>Hintergrund</label>
+    <div class="themes" id="themes"></div>
+    <label>Oder eigenes Hintergrundbild hochladen<input id="file" type="file" accept="image/*"></label>
+    <button class="go" type="submit">Countdown starten</button>
+  </form>
+</section>
+
+<section id="show" hidden>
+  <h1 id="title"></h1>
+  <p class="sub" id="sub"></p>
+  <div class="count" id="count"></div>
+  <div class="acts"><button class="ghost" id="copy" type="button">Link kopieren</button><button class="ghost" id="edit" type="button">Neu einstellen</button></div>
+</section>
+
+<footer><div id="seo"><p><strong>Weihnachtscountdown: Wie lange noch bis Weihnachten?</strong></p><p>Heiligabend ist am 24. Dezember. Hier siehst du live, wie viele Tage, Stunden und Minuten es noch bis zur Bescherung sind. Der erste Weihnachtsfeiertag folgt am 25. Dezember, der zweite am 26. Dezember. Mit „Neu einstellen“ kannst du auch einen eigenen Countdown für Adventssonntage oder den Weihnachtsurlaub bauen und den Link teilen.</p></div><nav><a href="index.html">Start</a> <a href="weihnachten.html">Weihnachten</a> <a href="ostern.html">Ostern</a> <a href="silvester.html">Silvester</a> <a href="halloween.html">Halloween</a> <a href="valentinstag.html">Valentinstag</a> <a href="impressum.html">Impressum</a> <a href="datenschutz.html">Datenschutz</a><a href="#" id="cs">Cookie-Einstellungen</a></nav></footer>
+<div id="cb" hidden role="dialog" aria-label="Cookie-Einstellungen"><p>Wir laden externe Schriftarten von Google und später eventuell Werbung. Dabei wird deine IP-Adresse an Google übertragen. Das passiert nur mit deiner Zustimmung. Details in der <a href="datenschutz.html">Datenschutzerklärung</a>.</p><div class="row"><button class="go" id="cy" type="button">Akzeptieren</button><button class="go alt" id="cn" type="button">Nur notwendige</button></div></div>
+<script>window.PRESET={name:"Weihnachten",theme:"weihnachten",md:[12,24]};</script>
+<script>
+const $=id=>document.getElementById(id);
+const rnd=(a,b)=>a+Math.random()*(b-a);
+const stars=(n,h,c)=>Array.from({length:n},()=>`<circle class="tw" cx="${rnd(0,1000)}" cy="${rnd(0,h)}" r="${rnd(.6,2)}" fill="${c||'#fff'}" style="animation-delay:${rnd(0,3)}s"/>`).join("");
+const tree=(x,y,s,lights)=>{
+  let t=`<g transform="translate(${x} ${y}) scale(${s})"><rect x="-8" y="0" width="16" height="30" fill="#2a1a10"/>`;
+  [[0,-120,50],[0,-70,70],[0,-15,90]].forEach(([_,yy,w])=>t+=`<polygon points="0,${yy-60} ${w},${yy+30} ${-w},${yy+30}" fill="#0f4d33"/>`);
+  if(lights)for(let i=0;i<9;i++)t+=`<circle class="tw" cx="${rnd(-60,60)}" cy="${rnd(-110,20)}" r="4" fill="${['#ffd54a','#ff5a5a','#7ad7ff'][i%3]}" style="animation-delay:${rnd(0,3)}s"/>`;
+  return t+`<polygon points="0,-135 6,-122 -6,-122" fill="#ffd54a"/></g>`;
+};
+const THEMES={
+ weihnachten:{n:"Weihnachten",bg:"linear-gradient(180deg,#06152b 0%,#0c2e3f 55%,#133d33 100%)",prev:"linear-gradient(#06152b,#143d33)",
+  svg:()=>stars(70,320)+`<circle cx="840" cy="110" r="38" fill="#fff6d6" opacity=".9"/><circle cx="500" cy="540" r="600" fill="#e8f1f5" opacity=".95" transform="translate(0 130)"/>`+
+   [[120,520,1.1],[260,545,.8],[760,525,1.2],[900,550,.9],[620,555,.7]].map(a=>tree(...a,true)).join("")},
+ geburtstag:{n:"Geburtstag",bg:"linear-gradient(135deg,#ff4f9a 0%,#ff8a5c 55%,#ffc857 100%)",prev:"linear-gradient(135deg,#ff4f9a,#ffc857)",
+  svg:()=>Array.from({length:90},()=>{const c=['#fff','#6c5ce7','#00cec9','#ffeaa7','#fd79a8','#74b9ff'][Math.floor(rnd(0,6))],x=rnd(0,1000),y=rnd(0,600),r=rnd(0,360);
+   return Math.random()<.5?`<rect x="${x}" y="${y}" width="${rnd(8,16)}" height="${rnd(4,8)}" fill="${c}" opacity=".85" transform="rotate(${r} ${x} ${y})"/>`:`<circle cx="${x}" cy="${y}" r="${rnd(3,7)}" fill="${c}" opacity=".85"/>`}).join("")+
+   `<circle cx="160" cy="130" r="260" fill="#fff" opacity=".08"/><circle cx="880" cy="520" r="300" fill="#fff" opacity=".08"/>`},
+ silvester:{n:"Silvester",bg:"linear-gradient(180deg,#05051a 0%,#1b0f45 60%,#3a1360 100%)",prev:"linear-gradient(#05051a,#3a1360)",
+  svg:()=>stars(60,600)+[[220,200,"#ffd54a"],[520,140,"#ff6b9d"],[790,250,"#5ee0ff"],[640,380,"#b388ff"],[330,400,"#ff9f43"]].map(([x,y,c],k)=>{
+   let l="";for(let i=0;i<16;i++){const a=i*Math.PI/8,r1=14,r2=rnd(55,85);l+=`<line x1="${x+Math.cos(a)*r1}" y1="${y+Math.sin(a)*r1}" x2="${x+Math.cos(a)*r2}" y2="${y+Math.sin(a)*r2}" stroke="${c}" stroke-width="3" stroke-linecap="round"/>`}
+   return `<g class="pulse" style="animation-delay:${k*.7}s">${l}<circle cx="${x}" cy="${y}" r="5" fill="${c}"/></g>`}).join("")},
+ hochzeit:{n:"Hochzeit",fg:"#4a2c5a",glass:"rgba(255,255,255,.55)",bg:"linear-gradient(135deg,#fff1f5 0%,#f3e1f7 50%,#dfe7ff 100%)",prev:"linear-gradient(135deg,#fff1f5,#dfe7ff)",
+  svg:()=>`<defs><filter id="bl"><feGaussianBlur stdDeviation="40"/></filter></defs><g filter="url(#bl)"><circle cx="150" cy="120" r="150" fill="#ffc2d6"/><circle cx="880" cy="140" r="170" fill="#c9b6ff"/><circle cx="700" cy="560" r="190" fill="#ffe0b8"/><circle cx="120" cy="520" r="150" fill="#b8d8ff"/></g>`+
+   `<g fill="none" stroke="#c9a14a" stroke-width="2.5" opacity=".8"><circle cx="455" cy="95" r="34"/><circle cx="500" cy="95" r="34"/></g>`+
+   Array.from({length:40},()=>`<circle class="tw" cx="${rnd(0,1000)}" cy="${rnd(0,600)}" r="${rnd(1.5,3)}" fill="#c9a14a" style="animation-delay:${rnd(0,3)}s"/>`).join("")},
+ sommer:{n:"Urlaub",bg:"linear-gradient(180deg,#ff7e5f 0%,#ffb86b 38%,#ffe29a 55%,#2bb3d6 56%,#0c6f9c 100%)",prev:"linear-gradient(#ff7e5f,#ffe29a 55%,#2bb3d6 56%,#0c6f9c)",
+  svg:()=>`<circle cx="500" cy="320" r="110" fill="#fff3c4" opacity=".95"/><circle cx="500" cy="320" r="170" fill="#fff3c4" opacity=".2"/>`+
+   [0,1,2].map(i=>`<path d="M0 ${380+i*70} Q 125 ${355+i*70} 250 ${380+i*70} T 500 ${380+i*70} T 750 ${380+i*70} T 1000 ${380+i*70} V 600 H0Z" fill="#fff" opacity="${.12+i*.06}"/>`).join("")+
+   `<path d="M0 600 L0 520 Q 120 470 250 600Z" fill="#f2c879"/>`},
+ halloween:{n:"Halloween",bg:"linear-gradient(180deg,#0e0618 0%,#2b0b3f 65%,#4a1450 100%)",prev:"linear-gradient(#0e0618,#4a1450)",
+  svg:()=>stars(40,300,"#ffcf9e")+`<circle cx="780" cy="170" r="95" fill="#ff9a2e" opacity=".25"/><circle cx="780" cy="170" r="70" fill="#ffb347"/><circle cx="755" cy="150" r="12" fill="#e8892a" opacity=".6"/><circle cx="805" cy="190" r="9" fill="#e8892a" opacity=".6"/>`+
+   `<path d="M0 600 V470 Q150 420 300 480 T620 470 T1000 450 V600Z" fill="#07030d"/><path d="M130 480 L130 360 M130 400 L80 350 M130 380 L185 330 M130 430 L90 405" stroke="#07030d" stroke-width="12" stroke-linecap="round"/>`+
+   [[300,120],[420,200],[600,90]].map(([x,y])=>`<path class="tw" d="M${x} ${y} q-18-18-34-6 q10 2 14 10 q-14 0-18 10 q12-4 22 2 q4-6 8-6 q4 0 8 6 q10-6 22-2 q-4-10-18-10 q4-8 14-10 q-16-12-34 6z" fill="#07030d"/>`).join("")},
+ ostern:{n:"Ostern",fg:"#2f4a2a",glass:"rgba(255,255,255,.55)",bg:"linear-gradient(180deg,#fff7c2,#d9f2c4 70%)",prev:"linear-gradient(#fff7c2,#9ed98a)",
+  svg:()=>`<circle cx="860" cy="100" r="60" fill="#fff3a8"/><path d="M0 600V470Q250 400 500 470T1000 450V600Z" fill="#8fd47a"/><path d="M0 600V530Q300 470 600 530T1000 520V600Z" fill="#6cbf5a"/>`+[[160,420,"#ff9ec4"],[330,460,"#9ed3ff"],[520,430,"#ffd54a"],[720,465,"#c9a6ff"],[880,425,"#ff9a7a"]].map(([x,y,c])=>`<g transform="translate(${x} ${y})"><ellipse rx="42" ry="56" fill="${c}"/><path d="M-40 -8l10-12 10 12 10-12 10 12 10-12 10 12 10-12 10 12" fill="none" stroke="#fff" stroke-width="5"/><circle cx="-14" cy="22" r="6" fill="#fff"/><circle cx="14" cy="26" r="6" fill="#fff"/></g>`).join("")},
+ valentinstag:{n:"Valentinstag",bg:"linear-gradient(135deg,#4a0a2a,#b0124f 60%,#ff6b8a)",prev:"linear-gradient(135deg,#4a0a2a,#ff6b8a)",
+  svg:()=>Array.from({length:22},()=>`<path class="tw" transform="translate(${rnd(0,1000)} ${rnd(0,600)}) scale(${rnd(.4,1.8)})" d="M0 -10C-20 -40 -60 -10 0 40C60 -10 20 -40 0 -10Z" fill="#ff8fb1" opacity="${rnd(.3,.8)}" style="animation-delay:${rnd(0,3)}s"/>`).join("")},
+ weltraum:{n:"Weltraum",bg:"radial-gradient(ellipse at 70% 30%,#2a0f5a,#05030f 70%)",prev:"radial-gradient(circle at 70% 30%,#5b2bb0,#05030f)",
+  svg:()=>`<defs><filter id="bl"><feGaussianBlur stdDeviation="50"/></filter></defs><g filter="url(#bl)" opacity=".6"><circle cx="250" cy="200" r="180" fill="#3b1c8f"/><circle cx="800" cy="450" r="200" fill="#a0307a"/></g>`+stars(120,600)+`<circle cx="760" cy="200" r="80" fill="#e8895a"/><ellipse cx="760" cy="200" rx="140" ry="22" fill="none" stroke="#f3c9a6" stroke-width="6" opacity=".8" transform="rotate(-18 760 200)"/>`},
+ herbst:{n:"Herbst",bg:"linear-gradient(180deg,#3a1d12,#b8571a 55%,#f0a73c)",prev:"linear-gradient(#3a1d12,#f0a73c)",
+  svg:()=>Array.from({length:34},()=>{const x=rnd(0,1000),y=rnd(0,560);return `<ellipse cx="${x}" cy="${y}" rx="${rnd(8,16)}" ry="${rnd(4,8)}" fill="${['#e4572e','#f3a712','#a63d0f','#ffcf56'][Math.floor(rnd(0,4))]}" opacity=".85" transform="rotate(${rnd(0,180)} ${x} ${y})"/>`}).join("")+`<circle cx="200" cy="360" r="90" fill="#ffe29a" opacity=".5"/><path d="M0 600V470Q250 410 500 480T1000 450V600Z" fill="#2a130b"/><path d="M820 480V380M820 420L780 380M820 400L865 355" stroke="#2a130b" stroke-width="10" stroke-linecap="round"/>`},
+ fruehling:{n:"Frühling",bg:"linear-gradient(180deg,#8fd3ff,#d8f5e0 65%)",prev:"linear-gradient(#8fd3ff,#8fd47a)",
+  svg:()=>`<circle cx="150" cy="120" r="55" fill="#fff6b0"/><path d="M0 600V430Q250 360 500 430T1000 410V600Z" fill="#8fd47a"/><path d="M0 600V500Q300 440 600 500T1000 490V600Z" fill="#5fb85a"/>`+Array.from({length:30},()=>{const c=['#ff9ec4','#fff','#ffd54a','#c9a6ff'][Math.floor(rnd(0,4))];return `<g transform="translate(${rnd(0,1000)} ${rnd(450,590)})"><circle cx="-5" r="5" fill="${c}"/><circle cx="5" r="5" fill="${c}"/><circle cy="-5" r="5" fill="${c}"/><circle cy="5" r="5" fill="${c}"/><circle r="3" fill="#f2a900"/></g>`}).join("")},
+ berge:{n:"Berge",bg:"linear-gradient(180deg,#2b3a67,#c06c84 60%,#f8b195)",prev:"linear-gradient(#2b3a67,#f8b195)",
+  svg:()=>stars(40,250)+`<polygon points="0,600 0,380 180,220 330,400 480,260 680,430 800,300 1000,420 1000,600" fill="#4a4e7a"/><polygon points="180,220 150,265 180,250 205,275" fill="#fff" opacity=".9"/><polygon points="800,300 770,340 800,328 825,350" fill="#fff" opacity=".9"/><polygon points="0,600 0,470 220,380 420,490 640,400 1000,500 1000,600" fill="#2b2d4f"/>`},
+ party:{n:"Party",bg:"linear-gradient(180deg,#12002b,#2d0a5c)",prev:"linear-gradient(135deg,#12002b,#e91e8c)",
+  svg:()=>[["#ff2d95",150],["#2de2ff",350],["#ffe62d",550],["#7dff2d",750],["#b02dff",900]].map(([c,x],i)=>`<polygon class="pulse" style="animation-delay:${i*.6}s" points="${x},0 ${x-90},600 ${x+90},600" fill="${c}" opacity=".18"/>`).join("")+`<g class="pulse"><circle cx="500" cy="90" r="42" fill="#ddd"/><path d="M458 90H542M500 48V132M470 60Q500 90 470 120M530 60Q500 90 530 120" stroke="#888" stroke-width="2" fill="none"/></g>`+stars(40,600,"#ffd6f5")},
+ neutral:{n:"Schlicht",bg:"#1d1b3a",prev:"linear-gradient(135deg,#4f46e5,#9333ea)",
+  svg:()=>`<defs><filter id="bl"><feGaussianBlur stdDeviation="70"/></filter></defs><g filter="url(#bl)"><circle cx="200" cy="150" r="260" fill="#4f46e5"/><circle cx="820" cy="200" r="240" fill="#9333ea"/><circle cx="560" cy="560" r="260" fill="#0ea5e9"/></g>`}
+};
+let theme="weihnachten",target=null,timer=null,customImg=null,fired=false;
+THEMES.custom={n:"Eigenes Bild",bg:"#1d1b3a",prev:"linear-gradient(135deg,#555,#999)",svg:()=>""};
+
+$("themes").innerHTML=Object.entries(THEMES).map(([k,t])=>`<label><input type="radio" name="theme" value="${k}"${k===theme?" checked":""}><span style="background:${t.prev}">${t.n}</span></label>`).join("");
+
+function applyTheme(k){
+  const t=THEMES[k]||THEMES.neutral;
+  $("scene").style.background=(k==="custom"&&customImg)?`linear-gradient(rgba(0,0,0,.25),rgba(0,0,0,.35)),url("${customImg}") center/cover no-repeat`:t.bg;
+  $("scene").innerHTML=`<svg viewBox="0 0 1000 600" preserveAspectRatio="xMidYMid slice" aria-hidden="true">${t.svg()}</svg>`;
+  document.documentElement.style.setProperty("--fg",t.fg||"#fff");
+  document.documentElement.style.setProperty("--glass",t.glass||"rgba(0,0,0,.32)");
+}
+const box=(n,l)=>`<div class="box"><b>${n}</b><small>${l}</small></div>`;
+function tick(){
+  const d=target-Date.now();
+  if(d<=0){$("count").innerHTML='<div class="done">Es ist soweit!</div>';clearInterval(timer);if(!fired){fired=true;confetti()}return}
+  const s=Math.floor(d/1000);
+  $("count").innerHTML=box(Math.floor(s/86400),"Tage")+box(String(Math.floor(s%86400/3600)).padStart(2,"0"),"Stunden")+box(String(Math.floor(s%3600/60)).padStart(2,"0"),"Minuten")+box(String(s%60).padStart(2,"0"),"Sekunden");
+}
+function start(c){
+  cur=c;fired=false;target=new Date(c.date+"T"+(c.time||"00:00")).getTime();
+  $("title").textContent=c.name;
+  const opt=c.time?{dateStyle:"full",timeStyle:"short"}:{dateStyle:"full"};
+  $("sub").textContent="bis zum "+new Date(target).toLocaleString("de-DE",opt)+(c.time?" Uhr":"");
+  applyTheme(c.theme);
+  $("setup").hidden=true;$("show").hidden=false;
+  clearInterval(timer);tick();timer=setInterval(tick,1000);
+  tick();
+}
+$("form").addEventListener("submit",e=>{
+  e.preventDefault();
+  const c={name:$("name").value.trim(),date:$("date").value,time:$("time").value,theme:document.querySelector("input[name=theme]:checked").value};
+  try{localStorage.setItem("countdown",JSON.stringify(c))}catch(_){}
+  try{localStorage.setItem("countdownImg",customImg||"")}catch(_){}
+  start(c);
+});
+$("edit").addEventListener("click",()=>{
+  clearInterval(timer);
+  $("show").hidden=true;$("setup").hidden=false;
+  applyTheme(document.querySelector("input[name=theme]:checked").value);
+});
+$("themes").addEventListener("change",e=>applyTheme(e.target.value));
+
+function setPrev(){if(customImg)document.querySelector("input[value=custom]+span").style.background=`url("${customImg}") center/cover`}
+function fit(file,cb){const r=new FileReader();r.onload=()=>{const im=new Image();im.onload=()=>{const k=Math.min(1,1600/Math.max(im.width,im.height)),c=document.createElement("canvas");c.width=im.width*k;c.height=im.height*k;c.getContext("2d").drawImage(im,0,0,c.width,c.height);cb(c.toDataURL("image/jpeg",.8))};im.src=r.result};r.readAsDataURL(file)}
+$("file").addEventListener("change",e=>{const f=e.target.files[0];if(!f)return;fit(f,d=>{customImg=d;document.querySelector("input[name=theme][value=custom]").checked=true;setPrev();applyTheme("custom")})});
+try{customImg=localStorage.getItem("countdownImg")||null;setPrev()}catch(_){}
+function confetti(){
+  const cv=$("cf"),x=cv.getContext("2d");cv.width=innerWidth;cv.height=innerHeight;
+  const P=[],col=["#ff4f9a","#ffd54a","#5ee0ff","#7cf29a","#b388ff","#ff9f43","#fff"];
+  const add=n=>{for(let i=0;i<n;i++)P.push({x:rnd(0,cv.width),y:-20,vx:rnd(-2,2),vy:rnd(2,6),w:rnd(6,12),h:rnd(4,8),r:rnd(0,6),vr:rnd(-.2,.2),c:col[i%col.length]})};
+  const t0=Date.now();add(160);
+  (function f(){x.clearRect(0,0,cv.width,cv.height);
+    if(Date.now()-t0<7000&&Math.random()<.5)add(6);
+    for(const p of P){p.x+=p.vx;p.y+=p.vy;p.r+=p.vr;x.save();x.translate(p.x,p.y);x.rotate(p.r);x.fillStyle=p.c;x.fillRect(-p.w/2,-p.h/2,p.w,p.h);x.restore()}
+    for(let i=P.length-1;i>=0;i--)if(P[i].y>cv.height+20)P.splice(i,1);
+    if(P.length||Date.now()-t0<7000)requestAnimationFrame(f);else x.clearRect(0,0,cv.width,cv.height)
+  })();
+}
+let cur=null;
+const FONT="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@1,800&family=Poppins:wght@300;600&display=swap";
+function easter(y){const a=y%19,b=Math.floor(y/100),c=y%100,d=Math.floor(b/4),e=b%4,f=Math.floor((b+8)/25),g=Math.floor((b-f+1)/3),h=(19*a+b-d-g+15)%30,i=Math.floor(c/4),k=c%4,l=(32+2*e+2*i-h-k)%7,m=Math.floor((a+11*h+22*l)/451),mo=Math.floor((h+l-7*m+114)/31),da=(h+l-7*m+114)%31+1;return new Date(y,mo-1,da)}
+function getInitial(){
+  const q=new URLSearchParams(location.search),n=q.get("name"),d=q.get("datum"),p2=v=>String(v).padStart(2,"0");
+  if(n&&/^\d{4}-\d{2}-\d{2}$/.test(d||"")){
+    const z=q.get("zeit")||"",th=q.get("theme");
+    return{name:n.slice(0,60),date:d,time:/^\d{2}:\d{2}$/.test(z)?z:"",theme:(THEMES[th]&&th!=="custom")?th:"neutral"};
+  }
+  const P=window.PRESET;
+  if(P){
+    const now=new Date(),mk=y=>P.easter?easter(y):new Date(y,P.md[0]-1,P.md[1]);
+    let t=mk(now.getFullYear());
+    if(t.getTime()+864e5<=now.getTime())t=mk(now.getFullYear()+1);
+    return{name:P.name,date:t.getFullYear()+"-"+p2(t.getMonth()+1)+"-"+p2(t.getDate()),time:"",theme:P.theme};
+  }
+  return null;
+}
+function fillForm(c){$("name").value=c.name;$("date").value=c.date;$("time").value=c.time||"";const r=document.querySelector(`input[name=theme][value="${c.theme}"]`);if(r)r.checked=true}
+$("copy").addEventListener("click",async()=>{
+  if(!cur)return;
+  const u=new URL("./",location.href);
+  u.searchParams.set("name",cur.name);u.searchParams.set("datum",cur.date);
+  if(cur.time)u.searchParams.set("zeit",cur.time);
+  u.searchParams.set("theme",cur.theme==="custom"?"neutral":cur.theme);
+  try{await navigator.clipboard.writeText(u.href);$("copy").textContent="Kopiert ✓";setTimeout(()=>$("copy").textContent="Link kopieren",2000)}catch(_){prompt("Link kopieren:",u.href)}
+});
+let saved=null;
+try{saved=JSON.parse(localStorage.getItem("countdown")||"null")}catch(_){}
+const initial=getInitial();
+if(initial){fillForm(initial);start(initial)}else if(saved&&saved.date){
+  $("name").value=saved.name;$("date").value=saved.date;$("time").value=saved.time||"";
+  const r=document.querySelector(`input[name=theme][value="${saved.theme}"]`);if(r)r.checked=true;
+  start(saved);
+}else applyTheme(theme);
+
+function ext(){
+  if(document.getElementById("gf"))return;
+  const l=document.createElement("link");l.id="gf";l.rel="stylesheet";l.href=FONT;document.head.appendChild(l);
+  // HIER nach der AdSense-Freigabe das Werbe-Skript laden (nur nach Einwilligung):
+  // const s=document.createElement("script");s.async=true;s.src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXX";s.crossOrigin="anonymous";document.head.appendChild(s);
+}
+function consent(v){try{localStorage.setItem("consent",v)}catch(_){}$("cb").hidden=true;if(v==="yes")ext()}
+$("cy").addEventListener("click",()=>consent("yes"));
+$("cn").addEventListener("click",()=>consent("no"));
+$("cs").addEventListener("click",e=>{e.preventDefault();$("cb").hidden=false});
+try{const v=localStorage.getItem("consent");if(!v)$("cb").hidden=false;else if(v==="yes")ext()}catch(_){$("cb").hidden=false}
+</script>
+</body>
+</html>
